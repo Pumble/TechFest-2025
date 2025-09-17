@@ -1,0 +1,64 @@
+void loop() {
+  int s1 = digitalRead(S1);
+  int s2 = digitalRead(S2);
+  int s3 = digitalRead(S3);
+  int s4 = digitalRead(S4);
+  int s5 = digitalRead(S5);
+
+  if (s3 == LOW && s1 == HIGH && s2 == HIGH && s4 == HIGH && s5 == HIGH) {
+    forward();  // Ir derecho
+  } else if (s1 == LOW || s2 == LOW) {
+    // Ajustar el tiempo que gira hacia la izquierda
+    // Girar hasta que el centro detecte la linea
+    if (s1 == LOW && s2 == HIGH) {
+      // Extremo izquierda
+      left(hardCurve);
+    } else if (s1 == HIGH && s2 == LOW) {
+      // Izquierda
+      left(softCurve);
+    } else {
+      searching();
+    }
+  } else if (s4 == LOW || s5 == LOW) {
+    // Ajustar el tiempo que gira hacia la derecha
+    // Girar hasta que el centro detecte la linea
+    if (s4 == LOW && s5 == HIGH) {
+      // Extremo derecho
+      right(hardCurve);
+    } else if (s4 == HIGH && s5 == LOW) {
+      // Derecha
+      right(softCurve);
+    } else {
+      searching();
+    }
+  } else {
+    /* Hay que buscar, girar en alguna direccion hasta 
+     * que el centro detecte la linea
+     */
+     searching();
+  }
+
+  delay(50);
+}
+
+void left(int milliseconds) {
+  Serial.println("left");
+
+  analogWrite(AIA, SPEED);
+  analogWrite(AIB, 0);
+  analogWrite(BIA, 0);
+  analogWrite(BIB, SPEED);
+
+  delay(milliseconds);
+}
+
+void right(int milliseconds) {
+  Serial.println("right");
+
+  analogWrite(AIA, 0);
+  analogWrite(AIB, SPEED);
+  analogWrite(BIA, SPEED);
+  analogWrite(BIB, 0);
+
+  delay(milliseconds);
+}

@@ -12,4 +12,4 @@ https://www.crcibernetica.com/five-channel-line-follower-module/?searchid=249146
 tutorial: https://arduinoinfo.mywikis.net/wiki/Robot%207-wayMultiTrackingSensor
 
 - Por alguna razon el S1 no parece funcionar, hay que probarlo en digital a ver que
-- 
+- paso lo mismo con los 2 lectores
