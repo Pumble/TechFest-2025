@@ -1,0 +1,4 @@
+N20 Motor to Lego Adapter by ROBOGAO on Thingiverse: https://www.thingiverse.com/thing:3824381
+
+Summary:
+I have a number of N20 style motors laying around that I wanted to use with Lego.  This mounts just like Lego Power Function motors having a pin on each side of the shaft.  The motor clips in from the back, holding the adapter shaft in place so no screws are needed.  The dimensions are all set to work with Pololu micro metal gearmotors (50:1 HPCB is shown in the pic) but this should work with other N20 style motors too.The .scad file is attached so you can adjust this to your own needs or just tweak the clearance value if its too loose or tight of a fit. Running a 4.9mm or 0.193" drill bit through the pin holes helps to clean them up while maintaining a tight friction fit.Printed in PLA on Prusa i3 MK3, 0.1mm layer height, 3 perimeters, no supports.

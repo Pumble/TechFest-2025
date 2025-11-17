@@ -42,7 +42,7 @@ void setup() {
   Serial.println("Starting funduino controller!");
 }
 
-void buttons_setup() {
+void buttons_setup() {    
   for (int i; i < 7; i++) {
     pinMode(BUTTONS[i], INPUT);
     digitalWrite(BUTTONS[i], HIGH);
