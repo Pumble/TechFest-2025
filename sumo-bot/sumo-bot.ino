@@ -90,6 +90,14 @@ char incoming = 'S';
 #define HB1_IN3 19
 #define HB1_IN4 18
 
+// H-BRIDGE 2 PINS
+#define HB2_ENA 13
+#define HB2_IN1 12
+#define HB2_IN2 14
+#define HB2_ENB 25
+#define HB2_IN3 27
+#define HB2_IN4 26
+
 int speed = 255;
 // Setting PWM properties
 const int freq = 30000;
@@ -97,6 +105,7 @@ const int pwmChannel = 0;
 const int resolution = 8;
 
 L298N HB1 = { HB1_ENA, HB1_IN1, HB1_IN2, HB1_ENB, HB1_IN3, HB1_IN4 };
+L298N HB2 = { HB2_ENA, HB2_IN1, HB2_IN2, HB2_ENB, HB2_IN3, HB2_IN4 };
 
 /* ============================================================= SETUP ============================================================= */
 void setup() {
@@ -105,6 +114,7 @@ void setup() {
 
   Serial.println("==> L298N setup");
   HB1.setup(freq, resolution, pwmChannel);
+  HB2.setup(freq, resolution, pwmChannel);
   Serial.println("==> L298N setup completed");
 
   Serial.println("Setup completed...");
@@ -130,19 +140,21 @@ void forward() {
   Serial.println("Moving forward");
 
   HB1.forward(speed);
+  HB2.forward(speed);
 }
 
 void backwards() {
   Serial.println("Moving backwards");
 
   HB1.backward(speed);
+  HB2.backward(speed);
 }
 
 void stop() {
   Serial.println("stoping");
 
-  // H-BRIDGE 1
   HB1.stop();
+  HB2.stop();
 }
 
 void left() {
