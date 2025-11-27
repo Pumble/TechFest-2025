@@ -6,6 +6,7 @@
 
 /* ============================================================= INCLUDES ============================================================= */
 #include "BluetoothSerial.h"
+#include <ESP32Servo.h>
 
 /* ============================================================= CHECKS ============================================================= */
 // Check if Bluetooth is available
@@ -98,6 +99,14 @@ char incoming = 'S';
 #define HB2_IN3 27
 #define HB2_IN4 26
 
+// SERVO PINS
+#define SERVO_PIN_A 4
+#define SERVO_PIN_B 2
+#define SERVO_INITIAL_POSITION 90
+#define SERVO_DOWN_POSITION 15
+#define SERVO_MIDDLE_POSITION 45
+#define SERVO_HIGH_POSITION 90
+
 int speed = 255;
 // Setting PWM properties
 const int freq = 30000;
@@ -106,6 +115,8 @@ const int resolution = 8;
 
 L298N HB1 = { HB1_ENA, HB1_IN1, HB1_IN2, HB1_ENB, HB1_IN3, HB1_IN4 };
 L298N HB2 = { HB2_ENA, HB2_IN1, HB2_IN2, HB2_ENB, HB2_IN3, HB2_IN4 };
+Servo ServoA;
+Servo ServoB;
 
 /* ============================================================= SETUP ============================================================= */
 void setup() {
@@ -117,22 +128,34 @@ void setup() {
   HB2.setup(freq, resolution, pwmChannel);
   Serial.println("==> L298N setup completed");
 
+  Serial.println("==> Servo setup");
+  ServoA.attach(SERVO_PIN_A, 500, 2500);
+  ServoB.attach(SERVO_PIN_B, 500, 2500);
+  ServoA.write(SERVO_INITIAL_POSITION);
+  ServoB.write(SERVO_INITIAL_POSITION);
+  Serial.println("==> Servo setup completed");
+
   Serial.println("Setup completed...");
 }
 
 /* ============================================================= LOOP ============================================================= */
 void loop() {
-  stop();
-  delay(1000);
+  // stop();
+  // delay(1000);
 
-  forward();
-  delay(5000);
+  // forward();
+  // delay(5000);
 
-  stop();
-  delay(1000);
+  // stop();
+  // delay(1000);
 
-  backwards();
-  delay(5000);
+  // backwards();
+  // delay(5000);
+
+   // Mover a la posición 90 grados
+  ServoA.write(90);
+  ServoB.write(90);
+  delay(1000); // Espera 1 segundo
 }
 
 /* ============================================================= MOVEMENT ============================================================= */
