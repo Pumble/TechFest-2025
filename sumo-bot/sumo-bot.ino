@@ -100,8 +100,8 @@ char incoming = 'S';
 #define HB2_IN4 26
 
 // SERVO PINS
-#define SERVO_PIN_A 32 // Lo comecte al mismo pin pero con alimentacion aparte
-#define SERVO_PIN_B 33 // FUNCIONA
+#define SERVO_PIN_A 32  // Lo comecte al mismo pin pero con alimentacion aparte
+#define SERVO_PIN_B 33  // FUNCIONA
 #define SERVO_INITIAL_POSITION 90
 #define SERVO_DOWN_POSITION 15
 #define SERVO_MIDDLE_POSITION 45
@@ -131,20 +131,54 @@ void setup() {
   Serial.println("==> Servo setup");
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
-
   ServoA.attach(SERVO_PIN_A, 500, 2400);
   ServoB.attach(SERVO_PIN_B, 500, 2400);
-
   ServoA.write(SERVO_INITIAL_POSITION);
   ServoB.write(SERVO_INITIAL_POSITION);
   Serial.println("==> Servo setup completed");
 
+  Serial.println("==> Servo setup");
+  BT.begin(BL_NAME);  // Nombre de su dispositivo Bluetooth y en modo esclavo
   Serial.println("Setup completed...");
 }
 
 /* ============================================================= LOOP ============================================================= */
 void loop() {
-  servoTest();
+  if (BT.available())  // Compruebe si recibimos algo de Bluetooth
+  {
+    incoming = BT.read();  // Lee lo que recibimos
+    Serial.print("Recibido: ");
+    Serial.println(incoming);
+
+    switch (incoming) {
+      case MOVEMENT_FORWARD:
+        stop();
+        forward();
+        break;
+      case MOVEMENT_BACKWARD:
+        stop();
+        backwards();
+        break;
+      case MOVEMENT_LEFT:
+        left();
+        break;
+      case MOVEMENT_RIGHT:
+        right();
+        break;
+      case MOVEMENT_STOP:
+        stop();
+        break;
+      case SERVO_UP:
+        servoUp();
+        break;
+      case SERVO_DOWN:
+        servoDown();
+        break;
+      default:
+        Serial.println("Comando no reconocido");
+        break;
+    }
+  }
 }
 
 /* ============================================================= MOVEMENT ============================================================= */
@@ -183,6 +217,19 @@ void right() {
 
 /* ============================================================= SERVOS ============================================================= */
 
+void servoDown() {
+  ServoA.write(SERVO_MIDDLE_POSITION);
+  ServoB.write(SERVO_MIDDLE_POSITION);
+  Serial.println("SERVO_MIDDLE_POSITION");
+  delay(100);
+}
+
+void servoUp() {
+  ServoA.write(SERVO_HIGH_POSITION);
+  ServoB.write(SERVO_HIGH_POSITION);
+  Serial.println("SERVO_HIGH_POSITION");
+  delay(100);
+}
 
 /* ============================================================= TESTING ============================================================= */
 void servoTest() {
@@ -197,9 +244,4 @@ void servoTest() {
   ServoB.write(SERVO_HIGH_POSITION);
   Serial.println("SERVO_HIGH_POSITION");
   delay(servo_delay);
-
-  // ServoA.write(SERVO_DOWN_POSITION);
-  // ServoB.write(SERVO_DOWN_POSITION);
-  // Serial.println("SERVO_DOWN_POSITION");
-  // delay(servo_delay);
 }
