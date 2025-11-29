@@ -21,3 +21,10 @@ tutorial: https://arduinoinfo.mywikis.net/wiki/Robot%207-wayMultiTrackingSensor
 - 1x L9110 H bridge                     : https://www.crcibernetica.com/hg7881-l9110-dual-motor-driver
 - 2x Gear Motor DG01D                   : https://www.crcibernetica.com/gear-motor-dg01d-2-motors-female-connector
 1x Five Channel Line Follower module    : https://www.crcibernetica.com/five-channel-line-follower-module/
+
+# Componentes del sumo bot
+- 1x ESP32 Wifi & Bluetooth         : https://www.crcibernetica.com/esp32-wifi-and-bluetooth-dev-board
+- 2x Servo de lego                  : https://www.crcibernetica.com/servo-motor-lego-compatible-dual-output-shafts
+- 4x Gear Motor DG01D               : https://www.crcibernetica.com/gear-motor-dg01d-2-motors-female-connector
+- 4x 9V Battery Holder              : https://www.crcibernetica.com/9v-battery-holder-with-cover-and-switch
+- 2x L298N Motor Driver Controller  : https://www.crcibernetica.com/l298n-motor-driver-controller

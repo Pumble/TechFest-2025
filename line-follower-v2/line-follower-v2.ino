@@ -14,8 +14,8 @@ byte SPEED = 200;
 const int S2 = A5;                         // Izquierda
 const int S3 = A4;                         // Centro
 const int S4 = A3;                         // Derecha
-const unsigned long SENSOR_INTERVAL = 50;  // ms entre lecturas
-const int SENSOR_CONFIRM_COUNT = 1;        // lecturas consecutivas necesarias (1 = sin debounce, respuesta rápida)
+const unsigned long SENSOR_INTERVAL = 30;  // ms entre lecturas
+const int SENSOR_CONFIRM_COUNT = 2;        // lecturas consecutivas necesarias (1 = sin debounce, respuesta rápida)
 
 // Tiempo de espera antes de iniciar el robot
 unsigned long WAIT_FOR_START = 3000;
@@ -26,7 +26,7 @@ enum State {
   SEARCHING,
   FOLLOWING_LINE
 };
-const unsigned long STATE_INTERVAL = 50;  // ms entre actualizaciones de estado
+const unsigned long STATE_INTERVAL = 60;  // ms entre actualizaciones de estado
 
 // timeout de seguridad para giros (ms)
 const unsigned long TURN_MAX_MS = 3500;  // aumentado para giros lentos
@@ -37,7 +37,7 @@ bool D2_STATE = false;
 bool D3_STATE = false;  // estado central (actualizado por muestreo)
 bool D4_STATE = false;
 unsigned long LAST_SENSOR_MILLIS = 0;
-unsigned long LAST_STATE_MILLIS = 0;
+unsigned long LAST_STATE_MILLIS = 0;c:\Users\Juan\Desktop\TechFest-2025\sumo-bot\sumo-bot.ino
 // Flags para giros no bloqueantes
 bool TURNING_LEFT_UNTIL_CENTER = false;
 unsigned long LEFT_START_MILLIS = 0;
@@ -100,63 +100,61 @@ void setup() {
 }
 
 void loop() {
-  forward();
+  // Actualizar sensores sin bloquear
+  pollSensorsNonBlocking();
 
-  // // Actualizar sensores sin bloquear
-  // pollSensorsNonBlocking();
+  // Procesar tareas de giro no bloqueantes
+  processTurningTasks();
 
-  // // Procesar tareas de giro no bloqueantes
-  // processTurningTasks();
+  // Actualizar estado sin bloquear (ejecuta periodicamente)
+  updateStateNonBlocking();
 
-  // // Actualizar estado sin bloquear (ejecuta periodicamente)
-  // updateStateNonBlocking();
+  // Telemetría LED no bloqueante (debug offline)
+  indicateStatusNonBlocking();
 
-  // // Telemetría LED no bloqueante (debug offline)
-  // indicateStatusNonBlocking();
+  // Usar el ultimo estado actualizado
+  // sd2: snapshot de D2
+  bool sd2 = D2_STATE;
+  bool sd3 = D3_STATE;
+  bool sd4 = D4_STATE;
 
-  // // Usar el ultimo estado actualizado
-  // // sd2: snapshot de D2
-  // bool sd2 = D2_STATE;
-  // bool sd3 = D3_STATE;
-  // bool sd4 = D4_STATE;
+  // Actualizar estado
+  updateCurrentState(sd2, sd3, sd4);
 
-  // // Actualizar estado
-  // updateCurrentState(sd2, sd3, sd4);
+  // indicar con LED_BUILTIN: encendido únicamente cuando seguimos la línea
+  if (CURRENT_STATE == FOLLOWING_LINE) digitalWrite(LED_BUILTIN, HIGH);
+  else digitalWrite(LED_BUILTIN, LOW);
 
-  // // indicar con LED_BUILTIN: encendido únicamente cuando seguimos la línea
-  // if (CURRENT_STATE == FOLLOWING_LINE) digitalWrite(LED_BUILTIN, HIGH);
-  // else digitalWrite(LED_BUILTIN, LOW);
+  switch (CURRENT_STATE) {
+    case SEARCHING:
+      searching();
+      break;
+    case FOLLOWING_LINE:
+      // Serial.println("Siguiendo la linea");
+      /* Ejecutar acción según qué sensor detecta la línea:
+       * - sd2 (izquierda): iniciar giro a la izquierda hasta que S3 vea la línea.
+       * - sd3 (centro): avanzar recto.
+       * - sd4 (derecha): iniciar giro a la derecha hasta que S3 vea la línea.
+       * - ninguno: detenerse (no deberíamos llegar aquí en FOLLOWING_LINE).
+       */
 
-  // switch (CURRENT_STATE) {
-  //   case SEARCHING:
-  //     searching();
-  //     break;
-  //   case FOLLOWING_LINE:
-  //     // Serial.println("Siguiendo la linea");
-  //     /* Ejecutar acción según qué sensor detecta la línea:
-  //      * - sd2 (izquierda): iniciar giro a la izquierda hasta que S3 vea la línea.
-  //      * - sd3 (centro): avanzar recto.
-  //      * - sd4 (derecha): iniciar giro a la derecha hasta que S3 vea la línea.
-  //      * - ninguno: detenerse (no deberíamos llegar aquí en FOLLOWING_LINE).
-  //      */
+      // Ejecutar únicamente la acción prioritaria en esta iteración
+      if (sd2) {  // izquierda
+        startLeftUntilCenter();
+      } else if (sd3) {  // centro
+        forward();
+      } else if (sd4) {  // derecha
+        startRightUntilCenter();
+      }
+      // Si ningún sensor detecta, NO llamar softStop aquí — dejar que el movimiento
+      // actual continúe hasta que updateCurrentState cambie a SEARCHING.
+      // Esto evita paradas innecesarias durante pérdidas momentáneas de línea.
 
-  //     // Ejecutar únicamente la acción prioritaria en esta iteración
-  //     if (sd2) {  // izquierda
-  //       startLeftUntilCenter();
-  //     } else if (sd3) {  // centro
-  //       forward();
-  //     } else if (sd4) {  // derecha
-  //       startRightUntilCenter();
-  //     }
-  //     // Si ningún sensor detecta, NO llamar softStop aquí — dejar que el movimiento
-  //     // actual continúe hasta que updateCurrentState cambie a SEARCHING.
-  //     // Esto evita paradas innecesarias durante pérdidas momentáneas de línea.
-
-  //     break;
-  //   default:
-  //     Serial.println("No se que hacer, ayuda!");
-  //     break;
-  // }
+      break;
+    default:
+      Serial.println("No se que hacer, ayuda!");
+      break;
+  }
 }
 
 /* ================================  SETUPS ================================ */

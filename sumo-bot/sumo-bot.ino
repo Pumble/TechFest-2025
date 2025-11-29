@@ -100,8 +100,8 @@ char incoming = 'S';
 #define HB2_IN4 26
 
 // SERVO PINS
-#define SERVO_PIN_A 4
-#define SERVO_PIN_B 2
+#define SERVO_PIN_A 32 // Lo comecte al mismo pin pero con alimentacion aparte
+#define SERVO_PIN_B 33 // FUNCIONA
 #define SERVO_INITIAL_POSITION 90
 #define SERVO_DOWN_POSITION 15
 #define SERVO_MIDDLE_POSITION 45
@@ -129,8 +129,12 @@ void setup() {
   Serial.println("==> L298N setup completed");
 
   Serial.println("==> Servo setup");
-  ServoA.attach(SERVO_PIN_A, 500, 2500);
-  ServoB.attach(SERVO_PIN_B, 500, 2500);
+  ESP32PWM::allocateTimer(0);
+  ESP32PWM::allocateTimer(1);
+
+  ServoA.attach(SERVO_PIN_A, 500, 2400);
+  ServoB.attach(SERVO_PIN_B, 500, 2400);
+
   ServoA.write(SERVO_INITIAL_POSITION);
   ServoB.write(SERVO_INITIAL_POSITION);
   Serial.println("==> Servo setup completed");
@@ -140,22 +144,7 @@ void setup() {
 
 /* ============================================================= LOOP ============================================================= */
 void loop() {
-  // stop();
-  // delay(1000);
-
-  // forward();
-  // delay(5000);
-
-  // stop();
-  // delay(1000);
-
-  // backwards();
-  // delay(5000);
-
-   // Mover a la posición 90 grados
-  ServoA.write(90);
-  ServoB.write(90);
-  delay(1000); // Espera 1 segundo
+  servoTest();
 }
 
 /* ============================================================= MOVEMENT ============================================================= */
@@ -190,4 +179,27 @@ void right() {
   Serial.println("Moving right");
 
   HB1.forward(200);
+}
+
+/* ============================================================= SERVOS ============================================================= */
+
+
+/* ============================================================= TESTING ============================================================= */
+void servoTest() {
+  int servo_delay = 5000;
+
+  ServoA.write(SERVO_MIDDLE_POSITION);
+  ServoB.write(SERVO_MIDDLE_POSITION);
+  Serial.println("SERVO_MIDDLE_POSITION");
+  delay(servo_delay);
+
+  ServoA.write(SERVO_HIGH_POSITION);
+  ServoB.write(SERVO_HIGH_POSITION);
+  Serial.println("SERVO_HIGH_POSITION");
+  delay(servo_delay);
+
+  // ServoA.write(SERVO_DOWN_POSITION);
+  // ServoB.write(SERVO_DOWN_POSITION);
+  // Serial.println("SERVO_DOWN_POSITION");
+  // delay(servo_delay);
 }
