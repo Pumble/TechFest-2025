@@ -83,7 +83,7 @@ char incoming = 'S';
 #define SERVO_UP 'N'           // 78
 
 // ================================== L298N VARS
-// H-BRIDGE 1 PINS
+// H-BRIDGE 1 PINS ==> DERECHA
 #define HB1_ENA 23
 #define HB1_IN1 22
 #define HB1_IN2 21
@@ -91,7 +91,7 @@ char incoming = 'S';
 #define HB1_IN3 19
 #define HB1_IN4 18
 
-// H-BRIDGE 2 PINS
+// H-BRIDGE 2 PINS ==> IZQUIERDA
 #define HB2_ENA 13
 #define HB2_IN1 12
 #define HB2_IN2 14
@@ -100,7 +100,7 @@ char incoming = 'S';
 #define HB2_IN4 26
 
 // SERVO PINS
-#define SERVO_PIN_A 32  // Lo comecte al mismo pin pero con alimentacion aparte
+#define SERVO_PIN_A 32  // Lo comecte al mismo pin 33 pero con alimentacion aparte
 #define SERVO_PIN_B 33  // FUNCIONA
 #define SERVO_INITIAL_POSITION 90
 #define SERVO_DOWN_POSITION 15
@@ -113,8 +113,8 @@ const int freq = 30000;
 const int pwmChannel = 0;
 const int resolution = 8;
 
-L298N HB1 = { HB1_ENA, HB1_IN1, HB1_IN2, HB1_ENB, HB1_IN3, HB1_IN4 };
-L298N HB2 = { HB2_ENA, HB2_IN1, HB2_IN2, HB2_ENB, HB2_IN3, HB2_IN4 };
+L298N HB1 = { HB1_ENA, HB1_IN1, HB1_IN2, HB1_ENB, HB1_IN3, HB1_IN4 }; // DERECHA
+L298N HB2 = { HB2_ENA, HB2_IN1, HB2_IN2, HB2_ENB, HB2_IN3, HB2_IN4 }; // IZQUIERDA
 Servo ServoA;
 Servo ServoB;
 
@@ -206,13 +206,15 @@ void stop() {
 void left() {
   Serial.println("Moving left");
 
-  HB1.backward(200);
+  HB1.forward(speed);
+  HB2.backward(speed);
 }
 
 void right() {
   Serial.println("Moving right");
 
-  HB1.forward(200);
+  HB1.backward(speed);
+  HB2.forward(speed);
 }
 
 /* ============================================================= SERVOS ============================================================= */
